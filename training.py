@@ -51,7 +51,9 @@ def train_bot(cat_name, render: int = -1):
     # END OF YOUR CODE. DO NOT MODIFY ANYTHING BEYOND THIS LINE.                #
     #############################################################################
     
-    start_time = time.time()
+    start_time = None
+    if render == -1:
+        start_time = time.time()
     
     for ep in range(1, episodes + 1):
         ##############################################################################
@@ -92,9 +94,10 @@ def train_bot(cat_name, render: int = -1):
         epsilon = max(min_epsilon, epsilon * epsilon_decay)
 
         # Check if the training time limit has been reached
-        if time.time() - start_time > training_duration_seconds:
-            print(f"\nTraining time limit of {training_duration_seconds} seconds reached. Stopping at episode {ep}.")
-            break
+        if start_time is not None:
+            if time.time() - start_time > training_duration_seconds:
+                print(f"\nTraining time limit of {training_duration_seconds} seconds reached. Stopping at episode {ep}.")
+                break
  
         #############################################################################
         # END OF YOUR CODE. DO NOT MODIFY ANYTHING BEYOND THIS LINE.                #
