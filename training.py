@@ -10,12 +10,6 @@ from cat_env import make_env
 #############################################################################
 
 
-
-
-
-
-
-
 #############################################################################
 # END OF YOUR CODE. DO NOT MODIFY ANYTHING BEYOND THIS LINE.                #
 #############################################################################
@@ -38,21 +32,26 @@ def train_bot(cat_name, render: int = -1):
     # Hint: You may want to declare variables for the hyperparameters of the    #
     # training process such as learning rate, exploration rate, etc.            #
     #############################################################################
+
+    alpha = 0.9
+    gamma = 0.95
+    epsilon = 1.0
+    epsilon_decay = 0.9995
+    min_epsilon = 0.01
+    max_steps = 100
+    training_duration_seconds = 20  # Time limit for the entire training process
     
-    
-
-
-
-
-
-
-
-
-
-    
+    def choose_action(state, epsilon):
+        if random.uniform(0, 1) < epsilon:
+            return env.action_space.sample()  # Explore: random action
+        else:
+            return np.argmax(q_table[state])  # Exploit: best action from Q-table
+        
     #############################################################################
     # END OF YOUR CODE. DO NOT MODIFY ANYTHING BEYOND THIS LINE.                #
     #############################################################################
+    
+    start_time = time.time()
     
     for ep in range(1, episodes + 1):
         ##############################################################################
@@ -65,42 +64,43 @@ def train_bot(cat_name, render: int = -1):
         # 4. Since this environment doesn't give rewards, compute reward manually    #
         # 5. Update the Q-table accordingly based on agent's rewards.                #
         ############################################################################## 
-               
+        state, _ = env.reset()
+        done = False
         
+        for step in range(max_steps):
+            action = choose_action(state, epsilon)
+            next_state, reward, done, _, info = env.step(action)
 
+            # Manually compute reward
+            if done and reward == 0:
+                reward = 1.0  # Reached the goal
+            else:
+                reward = -0.01  # Small penalty for each step to encourage faster completion
 
+            # Update Q-table using the Q-learning formula
+            old_value = q_table[state][action]
+            next_max = np.max(q_table[next_state])
 
+            new_value = (1 - alpha) * old_value + alpha * (reward + gamma * next_max)
+            q_table[state][action] = new_value
+            
+            state = next_state
+            
+            if done:
+                break
 
+        epsilon = max(min_epsilon, epsilon * epsilon_decay)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-        
+        # Check if the training time limit has been reached
+        if time.time() - start_time > training_duration_seconds:
+            print(f"\nTraining time limit of {training_duration_seconds} seconds reached. Stopping at episode {ep}.")
+            break
+ 
         #############################################################################
         # END OF YOUR CODE. DO NOT MODIFY ANYTHING BEYOND THIS LINE.                #
+        #############################################################################
+
+        
         #############################################################################
 
         # If rendering is enabled, play an episode every 'render' episodes
