@@ -33,12 +33,12 @@ def train_bot(cat_name, render: int = -1):
     # training process such as learning rate, exploration rate, etc.            #
     #############################################################################
 
-    alpha = 0.9
-    gamma = 0.95
+    alpha = 0.4
+    gamma = 0.9
     epsilon = 1.0
-    epsilon_decay = 0.9995
+    epsilon_decay = 0.9985
     min_epsilon = 0.01
-    max_steps = 100
+    max_steps = 150
     training_duration_seconds = 20  # Time limit for the entire training process
     
     def choose_action(state, epsilon):
