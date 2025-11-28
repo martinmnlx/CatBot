@@ -36,11 +36,28 @@ def main():
     else:
         print(f"\nTraining complete! Starting game with trained bot...")
 
-    print("Press Q to quit.")
-    
-    # Play using the trained Q-table
-    env = make_env(cat_type=args.cat)
-    play_q_table(env, q_table, max_steps=60, window_title='Cat Chase - Final Trained Bot')
+    # --- Evaluation Runs ---
+    num_runs = 20
+    successes = 0
+    total_moves = 0
+    print(f"\n--- Running {num_runs} evaluation runs ---")
+    print("Press Q to quit during a run.")
+
+    for i in range(num_runs):
+        print(f"\nRun {i + 1}/{num_runs}:")
+        env = make_env(cat_type=args.cat)
+        # Use a slightly longer move_delay to make visualization clearer
+        success, moves = play_q_table(env, q_table, max_steps=60, move_delay=0.05, window_title=f'Cat Chase - Evaluation Run {i+1}')
+        if success:
+            successes += 1
+            total_moves += moves
+
+    print("\n--- Evaluation Summary ---")
+    success_rate = (successes / num_runs) * 100
+    print(f"Success rate: {success_rate:.1f}% ({successes}/{num_runs})")
+    if successes > 0:
+        average_moves = total_moves / successes
+        print(f"Average moves on success: {average_moves:.2f}")
 
 if __name__ == "__main__":
     main()

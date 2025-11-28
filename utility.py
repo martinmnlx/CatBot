@@ -41,7 +41,7 @@ def play_game(env):
                 
     env.close()
 
-def play_q_table(env, q_table, move_delay=0.25, max_steps=1000, window_title=None):
+def play_q_table(env, q_table, move_delay=0.02, max_steps=1000, window_title=None):
     obs, _ = env.reset()
     env.render()
     if window_title:
@@ -83,4 +83,4 @@ def play_q_table(env, q_table, move_delay=0.25, max_steps=1000, window_title=Non
     env.render()
     time.sleep(1)
     env.close()
-    return terminated
+    return terminated, moves
