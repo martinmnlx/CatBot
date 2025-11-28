@@ -38,7 +38,7 @@ def train_bot(cat_name, render: int = -1):
     epsilon = 1.0
     epsilon_decay = 0.9985
     min_epsilon = 0.01
-    max_steps = 150
+    max_steps = 300
     training_duration_seconds = 20  # Time limit for the entire training process
     
     def choose_action(state, epsilon):
